@@ -1,0 +1,170 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+import { gsap } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js';
+
+// Scene setup
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById('webgl').appendChild(renderer.domElement);
+
+// Add cube (placeholder for custom models)
+const geometry = new THREE.BoxGeometry();
+const material = new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true });
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
+
+// Add particles for atmosphere
+const particlesGeometry = new THREE.BufferGeometry();
+const particlesCount = 500;
+const posArray = new Float32Array(particlesCount * 3);
+for (let i = 0; i < particlesCount * 3; i++) {
+  posArray[i] = (Math.random() - 0.5) * 10;
+}
+particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+const particlesMaterial = new THREE.PointsMaterial({ size: 0.01, color: 0x00ffcc });
+const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particles);
+
+// Lighting
+const pointLight = new THREE.PointLight(0x00ffcc, 1, 100);
+pointLight.position.set(5, 5, 5);
+scene.add(pointLight);
+
+// Skills (interactive spheres)
+const skills = [
+  { name: 'Python', position: [2, 0, 0], description: 'Proficient in scripting and automation for cybersecurity.' },
+  { name: 'Burp Suite', position: [-2, 0, 0], description: 'Expert in web vulnerability assessment.' },
+  { name: 'Nmap', position: [0, 2, 0], description: 'Skilled in network scanning and reconnaissance.' },
+  { name: 'Linux', position: [0, -2, 0], description: 'Experienced with Kali and Ubuntu for pentesting.' }
+];
+const skillMeshes = [];
+skills.forEach(skill => {
+  const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.2),
+    new THREE.MeshBasicMaterial({ color: 0x00ffcc })
+  );
+  sphere.position.set(...skill.position);
+  sphere.userData = skill; // Store skill data
+  scene.add(sphere);
+  skillMeshes.push(sphere);
+});
+
+// Camera position
+camera.position.z = 5;
+
+// Raycasting for interactivity
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let currentSection = 'landing';
+
+window.addEventListener('mousemove', (event) => {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+});
+
+window.addEventListener('click', (event) => {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(skillMeshes);
+  if (intersects.length > 0 && currentSection === 'skills') {
+    const skill = intersects[0].object.userData;
+    updateUI(`
+      <h2>${skill.name}</h2>
+      <p>${skill.description}</p>
+      <button onclick="goToSkills()">Back to Skills</button>
+    `);
+  }
+});
+
+// Animation loop
+function animate() {
+  requestAnimationFrame(animate);
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
+  // Hover effect for skills
+  if (currentSection === 'skills') {
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(skillMeshes);
+    skillMeshes.forEach(mesh => {
+      mesh.scale.set(1, 1, 1); // Reset scale
+    });
+    if (intersects.length > 0) {
+      intersects[0].object.scale.set(1.5, 1.5, 1.5); // Enlarge on hover
+    }
+  }
+  renderer.render(scene, camera);
+}
+animate();
+
+// UI update function
+function updateUI(content) {
+  const ui = document.getElementById('ui-overlay');
+  ui.style.opacity = 0;
+  setTimeout(() => {
+    ui.innerHTML = content;
+    gsap.to(ui, { opacity: 1, duration: 0.5 });
+  }, 500);
+}
+
+// Cinematic transitions
+window.startJourney = function () {
+  currentSection = 'about';
+  document.getElementById('ui-overlay').style.opacity = 0;
+  gsap.to(camera.position, {
+    z: 10,
+    duration: 2,
+    ease: 'power2.inOut',
+    onComplete: () => {
+      updateUI(`
+        <h2>About Me</h2>
+        <p>Certified Penetration Tester with expertise in network security, ethical hacking, and full-stack development.<br>M.Sc. Physics, The New College, Chennai (2023).</p>
+        <button onclick="goToSkills()">View Skills</button>
+      `);
+    }
+  });
+};
+
+window.goToSkills = function () {
+  currentSection = 'skills';
+  gsap.to(camera.position, {
+    x: 0,
+    y: 0,
+    z: 5,
+    duration: 2,
+    ease: 'power2.inOut',
+    onComplete: () => {
+      updateUI(`
+        <h2>Skills</h2>
+        <p>Click on the spheres to explore my technical skills.</p>
+        <button onclick="goToProjects()">View Projects</button>
+      `);
+    }
+  });
+};
+
+window.goToProjects = function () {
+  currentSection = 'projects';
+  gsap.to(camera.position, {
+    x: 5,
+    y: 5,
+    z: 5,
+    duration: 2,
+    ease: 'power2.inOut',
+    onComplete: () => {
+      updateUI(`
+        <h2>Projects</h2>
+        <p>Placeholder: Add 3D models for projects like Ubuntu Pentesting Machine and DoS Simulation.</p>
+        <button onclick="goToSkills()">Back to Skills</button>
+      `);
+    }
+  });
+};
+
+// Handle resize
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
