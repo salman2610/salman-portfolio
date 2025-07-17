@@ -20,6 +20,7 @@ try {
   const geometry = new THREE.BoxGeometry();
   const material = new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true });
   const cube = new THREE.Mesh(geometry, material);
+  cube.visible = false; // Hide initially
   scene.add(cube);
 
   // Add particles for atmosphere
@@ -32,14 +33,37 @@ try {
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
   const particlesMaterial = new THREE.PointsMaterial({ size: 0.01, color: 0x00ffcc });
   const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+  particles.visible = false; // Hide initially
   scene.add(particles);
 
   // Lighting
   const pointLight = new THREE.PointLight(0x00ffcc, 1, 100);
   pointLight.position.set(5, 5, 5);
+  pointLight.visible = false; // Hide initially
   scene.add(pointLight);
 
-  // Skills (interactive spheres)
+  // Shader for glowing skill spheres
+  const skillMaterial = new THREE.ShaderMaterial({
+    uniforms: { time: { value: 0 } },
+    vertexShader: `
+      varying vec2 vUv;
+      void main() {
+        vUv = uv;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float time;
+      varying vec2 vUv;
+      void main() {
+        vec3 color = vec3(0.0, 1.0, 0.8);
+        float glow = sin(time + vUv.x * 10.0) * 0.5 + 0.5;
+        gl_FragColor = vec4(color * glow, 1.0);
+      }
+    `
+  });
+
+  // Skills (interactive spheres with shader)
   const skills = [
     { name: 'Python', position: [2, 0, 0], description: 'Proficient in scripting and automation for cybersecurity.' },
     { name: 'Burp Suite', position: [-2, 0, 0], description: 'Expert in web vulnerability assessment.' },
@@ -50,16 +74,18 @@ try {
   skills.forEach(skill => {
     const sphere = new THREE.Mesh(
       new THREE.SphereGeometry(0.2),
-      new THREE.MeshBasicMaterial({ color: 0x00ffcc })
+      skillMaterial
     );
     sphere.position.set(...skill.position);
     sphere.userData = skill;
+    sphere.visible = false; // Hide initially
     scene.add(sphere);
     skillMeshes.push(sphere);
   });
 
-  // Camera position
-  camera.position.z = 5;
+  // Camera position (start high for fly-in)
+  camera.position.set(0, 20, 10);
+  camera.rotation.x = 0.5; // Initial tilt for dramatic fly-in
 
   // Raycasting for interactivity
   const raycaster = new THREE.Raycaster();
@@ -91,6 +117,7 @@ try {
     requestAnimationFrame(animate);
     cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
+    skillMaterial.uniforms.time.value += 0.05; // Animate shader glow
     if (currentSection === 'skills') {
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(skillMeshes);
@@ -118,10 +145,22 @@ try {
   // Cinematic transitions
   window.startJourney = function () {
     currentSection = 'about';
+    document.getElementById('background').style.display = 'none'; // Hide background
+    document.getElementById('webgl').style.display = 'block'; // Show 3D canvas
+    cube.visible = true;
+    particles.visible = true;
+    pointLight.visible = true;
+    skillMeshes.forEach(mesh => mesh.visible = true);
     document.getElementById('ui-overlay').style.opacity = 0;
     gsap.to(camera.position, {
+      y: 0,
       z: 10,
-      duration: 2,
+      duration: 3,
+      ease: 'power2.inOut'
+    });
+    gsap.to(camera.rotation, {
+      x: -0.5,
+      duration: 3,
       ease: 'power2.inOut',
       onComplete: () => {
         updateUI(`
