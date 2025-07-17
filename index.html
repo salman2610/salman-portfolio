@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>P. Salmanul Faris - Portfolio</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/salman-portfolio/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -14,6 +14,12 @@
     <p>Cybersecurity Professional | Full-Stack Developer | Physicist</p>
     <button onclick="startJourney()">Enter My World</button>
   </div>
-  <script type="module" src="js/main.js"></script>
+  <script>
+    // Fallback to confirm JS is running
+    window.startJourney = window.startJourney || function() {
+      alert('JavaScript is running, but main.js may not be loaded. Check browser console (F12) for errors.');
+    };
+  </script>
+  <script type="module" src="/salman-portfolio/js/main.js"></script>
 </body>
 </html>
