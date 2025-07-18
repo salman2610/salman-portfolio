@@ -1,8 +1,9 @@
 body {
   margin: 0;
-  overflow: hidden;
+  overflow-y: auto; /* Enable scrolling */
   font-family: 'Orbitron', sans-serif;
   background: #000;
+  height: 400vh; /* Extended for scroll sections */
 }
 #webgl {
   position: fixed;
@@ -89,12 +90,14 @@ body {
   background: #00ffcc;
   color: #000;
 }
-.card-container {
-  perspective: 1000px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+#card-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
+  perspective: 1000px;
+  overflow: hidden;
 }
 .card {
   background: rgba(0, 255, 204, 0.1);
@@ -104,19 +107,28 @@ body {
   width: 300px;
   text-align: center;
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateZ(0);
   transition: transform 0.5s, opacity 0.5s;
-  cursor: pointer;
+  z-index: 10;
 }
-.card:hover {
-  transform: translateZ(20px) scale(1.05);
+.card.active {
+  transform: translate(-50%, -50%) translateZ(100px) scale(1.1);
+  opacity: 1;
   background: rgba(0, 255, 204, 0.3);
 }
-.card h2 {
-  font-size: 1.8em;
-  margin: 10px 0;
+.card.inactive {
+  transform: translate(-50%, -50%) translateZ(-100px);
+  opacity: 0.5;
 }
-.card p {
-  font-size: 1.2em;
+.room {
+  position: absolute;
+  width: 10;
+  height: 10;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid #00ffcc;
+  visibility: hidden;
 }
 @media (max-width: 768px) {
   .ui-overlay h1 {
