@@ -16,31 +16,26 @@ try {
   if (!webglDiv) throw new Error('WebGL container not found');
   webglDiv.appendChild(renderer.domElement);
 
-  // Add cube (placeholder for custom models)
-  const geometry = new THREE.BoxGeometry();
-  const material = new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true });
-  const cube = new THREE.Mesh(geometry, material);
-  cube.visible = false; // Hide initially
-  scene.add(cube);
+  // Add room (cube as placeholder)
+  const roomGeometry = new THREE.BoxGeometry(10, 10, 10);
+  const roomMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.7, wireframe: true });
+  const room = new THREE.Mesh(roomGeometry, roomMaterial);
+  room.position.set(0, 0, 0);
+  room.visible = false; // Hide initially
+  scene.add(room);
 
-  // Add particles for atmosphere (denser for fly-through)
+  // Add particles for fly-through
   const particlesGeometry = new THREE.BufferGeometry();
-  const particlesCount = 1000;
+  const particlesCount = 2000;
   const posArray = new Float32Array(particlesCount * 3);
   for (let i = 0; i < particlesCount * 3; i++) {
-    posArray[i] = (Math.random() - 0.5) * 20; // Wider spread
+    posArray[i] = (Math.random() - 0.5) * 30; // Wider spread for fly-through
   }
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
   const particlesMaterial = new THREE.PointsMaterial({ size: 0.02, color: 0x00ffcc });
   const particles = new THREE.Points(particlesGeometry, particlesMaterial);
   particles.visible = false; // Hide initially
   scene.add(particles);
-
-  // Lighting
-  const pointLight = new THREE.PointLight(0x00ffcc, 1, 100);
-  pointLight.position.set(5, 5, 5);
-  pointLight.visible = false; // Hide initially
-  scene.add(pointLight);
 
   // Shader for glowing skill spheres
   const skillMaterial = new THREE.ShaderMaterial({
@@ -63,7 +58,7 @@ try {
     `
   });
 
-  // Skills (interactive spheres with shader)
+  // Skills (interactive spheres inside room)
   const skills = [
     { name: 'Python', position: [2, 0, 0], description: 'Proficient in scripting and automation for cybersecurity.' },
     { name: 'Burp Suite', position: [-2, 0, 0], description: 'Expert in web vulnerability assessment.' },
@@ -114,8 +109,6 @@ try {
   // Animation loop
   function animate() {
     requestAnimationFrame(animate);
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
     skillMaterial.uniforms.time.value += 0.05; // Animate shader glow
     if (currentSection === 'skills') {
       raycaster.setFromCamera(mouse, camera);
@@ -171,37 +164,134 @@ try {
     displayNextMessage();
   }
 
-  // UI update function (card-based)
+  // UI update function (scroll-based cards)
   function updateUI(cards) {
-    const ui = document.getElementById('ui-overlay');
-    ui.innerHTML = '<div class="card-container"></div>';
-    const container = ui.querySelector('.card-container');
+    const container = document.getElementById('card-container');
+    container.innerHTML = '';
     cards.forEach((card, index) => {
       const cardElement = document.createElement('div');
       cardElement.className = 'card';
-      cardElement.style.transform = `translateZ(-${index * 50}px)`;
-      cardElement.style.opacity = 1 - index * 0.2;
       cardElement.innerHTML = `<h2>${card.title}</h2>${card.content}`;
-      cardElement.addEventListener('click', () => {
-        gsap.to(cardElement, {
-          transform: 'translateZ(0) scale(1.1)',
-          opacity: 1,
-          duration: 0.5,
-          zIndex: 10
-        });
-        cards.forEach((_, i) => {
-          if (i !== index) {
-            gsap.to(container.children[i], {
-              transform: `translateZ(-${(i + 1) * 50}px)`,
-              opacity: 0.5,
+      container.appendChild(cardElement);
+    });
+  }
+
+  // ScrollTrigger setup
+  gsap.registerPlugin(ScrollTrigger);
+  let scrollSections = [];
+
+  function setupScrollTriggers() {
+    scrollSections = [
+      {
+        title: 'About Me',
+        content: '<p>Certified Penetration Tester with expertise in network security, ethical hacking, and full-stack development.<br>M.Sc. Physics, The New College, Chennai (2023).</p><button onclick="goToSkills()">View Skills</button>',
+        trigger: 0
+      },
+      {
+        title: 'Skills',
+        content: '<p>Scroll to explore my technical skills.</p>',
+        trigger: 100
+      },
+      {
+        title: 'Projects',
+        content: '<p>Ubuntu Pentesting Machine: Configured a customized Ubuntu environment for ethical hacking.<br>DoS Attack Simulation: Executed a controlled Denial-of-Service attack in a lab.</p><button onclick="goToContact()">Contact Me</button>',
+        trigger: 200
+      },
+      {
+        title: 'Contact',
+        content: '<p><a href="https://linkedin.com/in/salmanul-faris-68b7332f9">LinkedIn</a><br>Email: salmanulfaris642@gmail.com</p>',
+        trigger: 300
+      }
+    ];
+
+    scrollSections.forEach((section, index) => {
+      ScrollTrigger.create({
+        trigger: `#card-container`,
+        start: `top ${section.trigger}vh`,
+        end: `top ${section.trigger + 100}vh`,
+        onEnter: () => {
+          currentSection = section.title.toLowerCase().replace(' ', '');
+          updateUI([{ title: section.title, content: section.content }]);
+          gsap.to('.card', {
+            className: 'card active',
+            duration: 0.5
+          });
+          if (index > 0) {
+            gsap.to('.card', {
+              className: 'card inactive',
               duration: 0.5
             });
           }
-        });
+          if (section.title === 'Skills') {
+            gsap.to(camera.position, {
+              x: 0,
+              y: 0,
+              z: 5,
+              duration: 1,
+              ease: 'power2.inOut'
+            });
+          } else if (section.title === 'Projects') {
+            gsap.to(camera.position, {
+              x: 5,
+              y: 5,
+              z: 5,
+              duration: 1,
+              ease: 'power2.inOut'
+            });
+          } else if (section.title === 'Contact') {
+            gsap.to(camera.position, {
+              x: -5,
+              y: -5,
+              z: 5,
+              duration: 1,
+              ease: 'power2.inOut'
+            });
+          }
+        },
+        onLeave: () => {
+          gsap.to('.card', { className: 'card inactive', duration: 0.5 });
+        },
+        onEnterBack: () => {
+          currentSection = section.title.toLowerCase().replace(' ', '');
+          updateUI([{ title: section.title, content: section.content }]);
+          gsap.to('.card', {
+            className: 'card active',
+            duration: 0.5
+          });
+          if (index > 0) {
+            gsap.to('.card', {
+              className: 'card inactive',
+              duration: 0.5
+            });
+          }
+          if (section.title === 'Skills') {
+            gsap.to(camera.position, {
+              x: 0,
+              y: 0,
+              z: 5,
+              duration: 1,
+              ease: 'power2.inOut'
+            });
+          } else if (section.title === 'Projects') {
+            gsap.to(camera.position, {
+              x: 5,
+              y: 5,
+              z: 5,
+              duration: 1,
+              ease: 'power2.inOut'
+            });
+          } else if (section.title === 'Contact') {
+            gsap.to(camera.position, {
+              x: -5,
+              y: -5,
+              z: 5,
+              duration: 1,
+              ease: 'power2.inOut'
+            });
+          }
+        }
       });
-      container.appendChild(cardElement);
     });
-    gsap.to(ui, { opacity: 1, duration: 0.5 });
   }
 
   // Cinematic transitions
@@ -211,25 +301,22 @@ try {
     showLoadingScreen(() => {
       document.getElementById('background').style.display = 'none';
       document.getElementById('webgl').style.display = 'block';
-      cube.visible = true;
+      room.visible = true;
       particles.visible = true;
-      pointLight.visible = true;
       skillMeshes.forEach(mesh => mesh.visible = true);
       gsap.to(camera.position, {
-        y: 0,
+        y: 5,
         z: 5,
         duration: 2,
         ease: 'power3.in'
       });
       gsap.to(camera.rotation, {
-        x: -0.5,
+        x: 0,
         duration: 2,
         ease: 'power3.in',
         onComplete: () => {
-          updateUI([{
-            title: 'About Me',
-            content: '<p>Certified Penetration Tester with expertise in network security, ethical hacking, and full-stack development.<br>M.Sc. Physics, The New College, Chennai (2023).</p><button onclick="goToSkills()">View Skills</button>'
-          }]);
+          setupScrollTriggers();
+          updateUI([{ title: 'About Me', content: '<p>Certified Penetration Tester with expertise in network security, ethical hacking, and full-stack development.<br>M.Sc. Physics, The New College, Chennai (2023).</p><button onclick="goToSkills()">View Skills</button>' }]);
         }
       });
     });
@@ -241,14 +328,8 @@ try {
       x: 0,
       y: 0,
       z: 5,
-      duration: 2,
-      ease: 'power2.inOut',
-      onComplete: () => {
-        updateUI([{
-          title: 'Skills',
-          content: '<p>Click on the spheres to explore my technical skills.</p><button onclick="goToProjects()">View Projects</button><button onclick="goToContact()">Contact Me</button>'
-        }]);
-      }
+      duration: 1,
+      ease: 'power2.inOut'
     });
   };
 
@@ -258,14 +339,8 @@ try {
       x: 5,
       y: 5,
       z: 5,
-      duration: 2,
-      ease: 'power2.inOut',
-      onComplete: () => {
-        updateUI([{
-          title: 'Projects',
-          content: '<p>Ubuntu Pentesting Machine: Configured a customized Ubuntu environment for ethical hacking.<br>DoS Attack Simulation: Executed a controlled Denial-of-Service attack in a lab.</p><button onclick="goToSkills()">Back to Skills</button><button onclick="goToContact()">Contact Me</button>'
-        }]);
-      }
+      duration: 1,
+      ease: 'power2.inOut'
     });
   };
 
@@ -275,14 +350,8 @@ try {
       x: -5,
       y: -5,
       z: 5,
-      duration: 2,
-      ease: 'power2.inOut',
-      onComplete: () => {
-        updateUI([{
-          title: 'Contact',
-          content: '<p><a href="https://linkedin.com/in/salmanul-faris-68b7332f9">LinkedIn</a><br>Email: salmanulfaris642@gmail.com</p><button onclick="goToSkills()">Back to Skills</button>'
-        }]);
-      }
+      duration: 1,
+      ease: 'power2.inOut'
     });
   };
 
