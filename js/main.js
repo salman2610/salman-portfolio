@@ -1,10 +1,10 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
 import { gsap } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.js';
-import { ScrollTrigger } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.js'; // Updated path
+import 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.js'; // Import as side-effect
 
 // Debugging
 console.log('main.js loaded successfully');
-console.log('ScrollTrigger loaded:', typeof ScrollTrigger !== 'undefined' ? 'Yes' : 'No');
+console.log('ScrollTrigger available:', typeof window.ScrollTrigger !== 'undefined' ? 'Yes' : 'No');
 
 // Scene setup
 try {
@@ -177,7 +177,7 @@ try {
   }
 
   // ScrollTrigger setup
-  gsap.registerPlugin(ScrollTrigger); // Explicitly register plugin
+  gsap.registerPlugin(window.ScrollTrigger); // Register the global ScrollTrigger
   let scrollSections = [];
 
   function setupScrollTriggers() {
