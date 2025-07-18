@@ -1,7 +1,6 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
-
-// Use global gsap (loaded in index.html)
-const gsap = window.gsap;
+import { gsap } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.js';
+import { ScrollTrigger } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js';
 
 // Debugging
 console.log('main.js loaded successfully');
@@ -170,7 +169,7 @@ try {
     container.innerHTML = '';
     cards.forEach((card, index) => {
       const cardElement = document.createElement('div');
-      cardElement.className = 'card';
+      cardElement.className = 'card' + (index === 0 ? ' active' : ' inactive');
       cardElement.innerHTML = `<h2>${card.title}</h2>${card.content}`;
       container.appendChild(cardElement);
     });
