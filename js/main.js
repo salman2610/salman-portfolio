@@ -1,5 +1,5 @@
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
-import gsap from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/gsap.js'; // Updated to default export
+import gsap from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.js'; // Fixed path
 
 // Debugging
 console.log('main.js loaded successfully');
