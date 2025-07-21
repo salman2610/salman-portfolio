@@ -130,6 +130,14 @@ body {
   border: 1px solid #00ffcc;
   visibility: hidden;
 }
+.three-room {
+  position: absolute; /* For 3D room walls */
+  width: 10;
+  height: 10;
+  background: rgba(0, 255, 204, 0.1);
+  border: 1px solid #00ffcc;
+  box-sizing: border-box;
+}
 @media (max-width: 768px) {
   .ui-overlay h1 {
     font-size: 2em;
