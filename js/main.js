@@ -1,6 +1,6 @@
+// Use global gsap from UMD script
+const gsap = window.gsap;
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
-// Use the correct ES6 module path
-import gsap from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.mjs';
 
 // Debugging
 console.log('main.js loaded successfully');
@@ -10,7 +10,7 @@ console.log('gsap loaded:', typeof gsap !== 'undefined' ? 'Yes' : 'No');
 // Scene setup
 try {
   if (typeof gsap === 'undefined') {
-    throw new Error('GSAP module failed to load. Check the import path or switch to non-module approach.');
+    throw new Error('GSAP failed to load globally. Check the script tags in index.html.');
   }
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
