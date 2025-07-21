@@ -1,6 +1,7 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
+
 // Use global gsap from UMD script
 const gsap = window.gsap;
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.168.0/build/three.module.js';
 
 // Debugging
 console.log('main.js loaded successfully');
