@@ -21,19 +21,36 @@ try {
   if (!webglDiv) throw new Error('WebGL container not found');
   webglDiv.appendChild(renderer.domElement);
 
-  // Add room (cube with walls)
-  const roomGeometry = new THREE.BoxGeometry(6, 6, 6); // Smaller room size
-  const roomMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.2, wireframe: true });
-  const room = new THREE.Mesh(roomGeometry, roomMaterial);
-  room.position.set(0, 0, 0);
-  scene.add(room);
+  // Add room with individual walls (Wonder Studios-like box)
+  const wallGeometry = new THREE.PlaneGeometry(6, 6);
+  const wallMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffcc, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
+  const walls = [
+    new THREE.Mesh(wallGeometry, wallMaterial), // Front
+    new THREE.Mesh(wallGeometry, wallMaterial), // Back
+    new THREE.Mesh(wallGeometry, wallMaterial), // Left
+    new THREE.Mesh(wallGeometry, wallMaterial), // Right
+    new THREE.Mesh(wallGeometry, wallMaterial), // Top
+    new THREE.Mesh(wallGeometry, wallMaterial)  // Bottom
+  ];
+  walls[0].position.z = -3; // Front
+  walls[1].position.z = 3;  // Back
+  walls[1].rotation.y = Math.PI;
+  walls[2].position.x = -3; // Left
+  walls[2].rotation.y = -Math.PI / 2;
+  walls[3].position.x = 3;  // Right
+  walls[3].rotation.y = Math.PI / 2;
+  walls[4].position.y = 3;  // Top
+  walls[4].rotation.x = Math.PI / 2;
+  walls[5].position.y = -3; // Bottom
+  walls[5].rotation.x = -Math.PI / 2;
+  walls.forEach(wall => scene.add(wall));
 
   // Add particles for fly-through
   const particlesGeometry = new THREE.BufferGeometry();
   const particlesCount = 2000;
   const posArray = new Float32Array(particlesCount * 3);
   for (let i = 0; i < particlesCount * 3; i++) {
-    posArray[i] = (Math.random() - 0.5) * 10; // Tighter spread
+    posArray[i] = (Math.random() - 0.5) * 5; // Tighter spread inside room
   }
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
   const particlesMaterial = new THREE.PointsMaterial({ size: 0.02, color: 0x00ffcc });
@@ -64,10 +81,10 @@ try {
 
   // Skills (interactive spheres inside room)
   const skills = [
-    { name: 'Python', position: [1.5, 1.5, 0], description: 'Proficient in scripting and automation for cybersecurity.' },
-    { name: 'Burp Suite', position: [-1.5, 1.5, 0], description: 'Expert in web vulnerability assessment.' },
-    { name: 'Nmap', position: [1.5, -1.5, 0], description: 'Skilled in network scanning and reconnaissance.' },
-    { name: 'Linux', position: [-1.5, -1.5, 0], description: 'Experienced with Kali and Ubuntu for pentesting.' }
+    { name: 'Python', position: [1, 1, 0], description: 'Proficient in scripting and automation for cybersecurity.' },
+    { name: 'Burp Suite', position: [-1, 1, 0], description: 'Expert in web vulnerability assessment.' },
+    { name: 'Nmap', position: [1, -1, 0], description: 'Skilled in network scanning and reconnaissance.' },
+    { name: 'Linux', position: [-1, -1, 0], description: 'Experienced with Kali and Ubuntu for pentesting.' }
   ];
   const skillMeshes = [];
   skills.forEach(skill => {
@@ -80,7 +97,7 @@ try {
   });
 
   // Camera position (start far for fly-through)
-  camera.position.set(0, 5, 10); // Adjusted for better view
+  camera.position.set(0, 0, 10);
   camera.lookAt(0, 0, 0);
 
   // Raycasting for interactivity
@@ -192,9 +209,9 @@ try {
           updateUI([{ title: section.title, content: section.content }]);
           gsap.to('.card', { className: 'card active', duration: 0.5 });
           if (index > 0) gsap.to('.card', { className: 'card inactive', duration: 0.5 });
-          if (section.title === 'Skills') gsap.to(camera.position, { x: 0, y: 0, z: 3, duration: 1, ease: 'power2.inOut' });
-          else if (section.title === 'Projects') gsap.to(camera.position, { x: 3, y: 3, z: 3, duration: 1, ease: 'power2.inOut' });
-          else if (section.title === 'Contact') gsap.to(camera.position, { x: -3, y: -3, z: 3, duration: 1, ease: 'power2.inOut' });
+          if (section.title === 'Skills') gsap.to(camera.position, { x: 0, y: 0, z: 2, duration: 1, ease: 'power2.inOut' });
+          else if (section.title === 'Projects') gsap.to(camera.position, { x: 2, y: 2, z: 2, duration: 1, ease: 'power2.inOut' });
+          else if (section.title === 'Contact') gsap.to(camera.position, { x: -2, y: -2, z: 2, duration: 1, ease: 'power2.inOut' });
         },
         onLeave: () => gsap.to('.card', { className: 'card inactive', duration: 0.5 }),
         onEnterBack: () => {
@@ -202,9 +219,9 @@ try {
           updateUI([{ title: section.title, content: section.content }]);
           gsap.to('.card', { className: 'card active', duration: 0.5 });
           if (index > 0) gsap.to('.card', { className: 'card inactive', duration: 0.5 });
-          if (section.title === 'Skills') gsap.to(camera.position, { x: 0, y: 0, z: 3, duration: 1, ease: 'power2.inOut' });
-          else if (section.title === 'Projects') gsap.to(camera.position, { x: 3, y: 3, z: 3, duration: 1, ease: 'power2.inOut' });
-          else if (section.title === 'Contact') gsap.to(camera.position, { x: -3, y: -3, z: 3, duration: 1, ease: 'power2.inOut' });
+          if (section.title === 'Skills') gsap.to(camera.position, { x: 0, y: 0, z: 2, duration: 1, ease: 'power2.inOut' });
+          else if (section.title === 'Projects') gsap.to(camera.position, { x: 2, y: 2, z: 2, duration: 1, ease: 'power2.inOut' });
+          else if (section.title === 'Contact') gsap.to(camera.position, { x: -2, y: -2, z: 2, duration: 1, ease: 'power2.inOut' });
         }
       });
     });
@@ -217,18 +234,17 @@ try {
     showLoadingScreen(() => {
       document.getElementById('background').style.display = 'none';
       document.getElementById('webgl').style.display = 'block';
-      room.visible = true;
+      walls.forEach(wall => wall.visible = true);
       particles.visible = true;
       skillMeshes.forEach(mesh => mesh.visible = true);
       gsap.to(camera.position, {
-        y: 0,
         z: 3,
         duration: 2,
         ease: 'power3.in',
         onUpdate: () => camera.lookAt(0, 0, 0),
         onComplete: () => {
           updateUI([{ title: 'About Me', content: '<p>Certified Penetration Tester with expertise in network security, ethical hacking, and full-stack development.<br>M.Sc. Physics, The New College, Chennai (2023).</p><button onclick="goToSkills()">View Skills</button>' }]);
-          setupScrollTriggers(); // Delayed until scene is ready
+          setTimeout(setupScrollTriggers, 100); // Delay to ensure DOM readiness
         }
       });
     });
@@ -236,17 +252,17 @@ try {
 
   window.goToSkills = function () {
     currentSection = 'skills';
-    gsap.to(camera.position, { x: 0, y: 0, z: 3, duration: 1, ease: 'power2.inOut' });
+    gsap.to(camera.position, { x: 0, y: 0, z: 2, duration: 1, ease: 'power2.inOut' });
   };
 
   window.goToProjects = function () {
     currentSection = 'projects';
-    gsap.to(camera.position, { x: 3, y: 3, z: 3, duration: 1, ease: 'power2.inOut' });
+    gsap.to(camera.position, { x: 2, y: 2, z: 2, duration: 1, ease: 'power2.inOut' });
   };
 
   window.goToContact = function () {
     currentSection = 'contact';
-    gsap.to(camera.position, { x: -3, y: -3, z: 3, duration: 1, ease: 'power2.inOut' });
+    gsap.to(camera.position, { x: -2, y: -2, z: 2, duration: 1, ease: 'power2.inOut' });
   };
 
   // Handle resize
