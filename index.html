@@ -10,7 +10,7 @@
 </head>
 <body>
   <div id="landing-effect" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100;">
-    <!-- Unicorn Studio effect from your code -->
+    <!-- Unicorn Studio effect -->
     <div data-us-project="DZC1eJBOt9S7XzxZKogB" style="width: 100%; height: 100%;"></div>
     <!-- Text and button overlay -->
     <div id="overlay-content" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 101; pointer-events: none;">
@@ -21,7 +21,7 @@
       // Load Unicorn Studio library
       !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
 
-      // Dynamic text overlay
+      // Dynamic text overlay with outline
       const canvas = document.getElementById('text-overlay');
       const ctx = canvas.getContext('2d');
       function resizeCanvas() {
@@ -34,13 +34,16 @@
 
       function drawText() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = 'bold 2em Orbitron'; // Bold, adjusted size
-        ctx.fillStyle = '#ffffff'; // White text
+        ctx.font = 'bold 2em Orbitron';
         ctx.textAlign = 'center';
-        ctx.shadowBlur = 15;
-        ctx.shadowColor = '#ffffff';
+        // Outline
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#00ffcc'; // Neon outline
+        ctx.strokeText('P. Salmanul Faris', canvas.width / 2, canvas.height / 2 - 40);
+        ctx.strokeText('Cybersecurity | Developer | Physicist', canvas.width / 2, canvas.height / 2 + 20);
+        // Fill
+        ctx.fillStyle = '#ffffff'; // White fill
         ctx.fillText('P. Salmanul Faris', canvas.width / 2, canvas.height / 2 - 40);
-        ctx.font = 'bold 1.2em Orbitron'; // Bold, adjusted size
         ctx.fillText('Cybersecurity | Developer | Physicist', canvas.width / 2, canvas.height / 2 + 20);
         requestAnimationFrame(drawText);
       }
@@ -63,15 +66,24 @@
         document.getElementById('landing-effect').style.opacity = '0';
         setTimeout(() => {
           document.getElementById('landing-effect').style.display = 'none';
-          if (window.startJourneyOriginal) window.startJourneyOriginal();
+          if (window.startJourney) window.startJourney(); // Ensure function exists
+          else console.error('startJourney not defined');
         }, 500);
       });
 
-      // Remove Unicorn Studio branding
+      // Remove Unicorn Studio branding with MutationObserver
       function hideBranding() {
-        const branding = document.querySelector('[data-us-branding]') || document.querySelector('.us-branding');
-        if (branding) branding.style.display = 'none';
-        else setTimeout(hideBranding, 100); // Poll until branding loads
+        const observer = new MutationObserver((mutations) => {
+          const branding = document.querySelector('[data-us-branding]') || document.querySelector('.us-branding');
+          if (branding) {
+            branding.style.display = 'none';
+            observer.disconnect(); // Stop observing once hidden
+          }
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        // Initial check
+        const initialBranding = document.querySelector('[data-us-branding]') || document.querySelector('.us-branding');
+        if (initialBranding) initialBranding.style.display = 'none';
       }
       hideBranding();
 
@@ -92,7 +104,7 @@
       <div id="terminal-messages"></div>
     </div>
   </div>
-  <div id="webgl" style="display: none;"></div>
+  <div id="webgl" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;"></div>
   <div class="ui-overlay" id="ui-overlay" style="display: none;">
     <!-- Button removed, handled by effect -->
   </div>
