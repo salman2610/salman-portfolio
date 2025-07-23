@@ -9,7 +9,55 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon"> <!-- Optional favicon -->
 </head>
 <body>
-  <div id="background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000;"></div>
+  <div id="landing-effect" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100;">
+    <!-- Placeholder for Unicorn Studio WebGL effect -->
+    <script>
+      // Simulated Unicorn Studio effect (replace with actual export from unicorn.studio)
+      const canvas = document.createElement('canvas');
+      canvas.style.position = 'absolute';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      document.getElementById('landing-effect').appendChild(canvas);
+
+      // Mock glowing text and particles
+      const ctx = canvas.getContext('2d');
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Glowing text simulation
+        ctx.font = '3em Orbitron';
+        ctx.fillStyle = 'rgba(0, 255, 204, 0.8)';
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#00ffcc';
+        ctx.fillText('P. Salmanul Faris', canvas.width / 2 - 150, canvas.height / 2 - 50);
+        ctx.font = '1.5em Orbitron';
+        ctx.fillText('Cybersecurity Professional | Full-Stack Developer | Physicist', canvas.width / 2 - 250, canvas.height / 2 + 20);
+        // Particle simulation
+        for (let i = 0; i < 100; i++) {
+          const x = Math.random() * canvas.width;
+          const y = Math.random() * canvas.height;
+          ctx.beginPath();
+          ctx.arc(x, y - (Date.now() % 2000) / 10, 1, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(0, 255, 204, 0.5)';
+          ctx.fill();
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
+
+      // Hide effect on button click
+      window.startJourney = () => {
+        document.getElementById('landing-effect').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('landing-effect').style.display = 'none';
+          if (window.startJourneyOriginal) window.startJourneyOriginal();
+        }, 500);
+      };
+      window.startJourneyOriginal = window.startJourney || function() {};
+    </script>
+  </div>
+  <div id="background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none;"></div>
   <div id="loading-screen" style="display: none;">
     <div class="terminal">
       <div class="terminal-header">> Cyber Matrix Initializing...</div>
@@ -17,20 +65,20 @@
     </div>
   </div>
   <div id="webgl" style="display: none;"></div>
-  <div class="ui-overlay" id="ui-overlay">
+  <div class="ui-overlay" id="ui-overlay" style="opacity: 0;">
     <h1>P. Salmanul Faris</h1>
     <p>Cybersecurity Professional | Full-Stack Developer | Physicist</p>
     <button onclick="startJourney()">Enter My World</button>
   </div>
   <div id="card-container"></div>
   <script>
-    // Fallback to confirm JS is running
+    // Fallback
     window.startJourney = window.startJourney || function() {
       alert('JavaScript is running, but main.js may not be loaded. Check browser console (F12) for errors.');
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script type="module" src="/salman-portfolio/js/main.js"></script> <!-- Restored type="module" -->
+  <script type="module" src="/salman-portfolio/js/main.js"></script>
 </body>
 </html>
