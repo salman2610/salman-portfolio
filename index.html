@@ -10,38 +10,19 @@
 </head>
 <body>
   <div id="landing-effect" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; cursor: pointer;">
-    <!-- Placeholder for Unicorn Studio liquid glass effect -->
-    <script>
-      // Simulated liquid glass effect (replace with actual export from unicorn.studio)
-      const canvas = document.createElement('canvas');
-      canvas.style.position = 'absolute';
-      canvas.style.top = '0';
-      canvas.style.left = '0';
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      document.getElementById('landing-effect').appendChild(canvas);
+    <!-- Unicorn Studio effect from your code -->
+    <div data-us-project="DZC1eJBOt9S7XzxZKogB" style="width: 100%; height: 100%;"></div>
+    <!-- Glowing text overlay -->
+    <canvas id="text-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+    <script type="text/javascript">
+      // Load Unicorn Studio library
+      !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
 
+      // Add glowing text overlay
+      const canvas = document.getElementById('text-overlay');
       const ctx = canvas.getContext('2d');
-      let mouseX = canvas.width / 2;
-      let mouseY = canvas.height / 2;
-
-      function animate() {
+      function drawText() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // Liquid glass simulation with ripple effect
-        const time = Date.now() * 0.001;
-        for (let x = 0; x < canvas.width; x += 10) {
-          for (let y = 0; y < canvas.height; y += 10) {
-            const dx = x - mouseX;
-            const dy = y - mouseY;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const ripple = Math.sin(dist * 0.1 - time) * 20;
-            ctx.beginPath();
-            ctx.fillStyle = `rgba(0, 255, 204, ${Math.max(0.2, 0.5 - dist / 500)})`;
-            ctx.arc(x + ripple, y + ripple, 5, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-        // Glowing text overlay
         ctx.font = '3em Orbitron';
         ctx.fillStyle = 'rgba(0, 255, 204, 0.8)';
         ctx.shadowBlur = 20;
@@ -49,22 +30,25 @@
         ctx.fillText('P. Salmanul Faris', canvas.width / 2 - 150, canvas.height / 2 - 50);
         ctx.font = '1.5em Orbitron';
         ctx.fillText('Cybersecurity Professional | Full-Stack Developer | Physicist', canvas.width / 2 - 250, canvas.height / 2 + 20);
-        requestAnimationFrame(animate);
+        requestAnimationFrame(drawText);
       }
-      animate();
+      drawText();
 
-      // Mouse interaction
-      canvas.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-      });
-      canvas.addEventListener('click', () => {
-        document.getElementById('landing-effect').style.opacity = '0';
-        setTimeout(() => {
-          document.getElementById('landing-effect').style.display = 'none';
-          if (window.startJourneyOriginal) window.startJourneyOriginal();
-        }, 500);
-      });
+      // Wait for Unicorn Studio to initialize, then add click handler
+      function setupClickHandler() {
+        if (window.UnicornStudio && window.UnicornStudio.isInitialized) {
+          document.getElementById('landing-effect').addEventListener('click', () => {
+            document.getElementById('landing-effect').style.opacity = '0';
+            setTimeout(() => {
+              document.getElementById('landing-effect').style.display = 'none';
+              if (window.startJourneyOriginal) window.startJourneyOriginal();
+            }, 500);
+          });
+        } else {
+          setTimeout(setupClickHandler, 100); // Poll until initialized
+        }
+      }
+      setupClickHandler();
 
       window.startJourney = () => {
         document.getElementById('landing-effect').style.opacity = '0';
@@ -85,7 +69,7 @@
   </div>
   <div id="webgl" style="display: none;"></div>
   <div class="ui-overlay" id="ui-overlay" style="display: none;">
-    <!-- Button removed, handled by liquid glass effect -->
+    <!-- Button removed, handled by effect -->
   </div>
   <div id="card-container"></div>
   <script>
