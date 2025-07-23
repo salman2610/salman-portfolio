@@ -15,8 +15,9 @@ try {
   }
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer();
+  const renderer = new THREE.WebGLRenderer({ alpha: true }); // Enable transparency
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0); // Transparent background
   const webglDiv = document.getElementById('webgl');
   if (!webglDiv) throw new Error('WebGL container not found');
   webglDiv.appendChild(renderer.domElement);
@@ -50,7 +51,7 @@ try {
   const particlesCount = 2000;
   const posArray = new Float32Array(particlesCount * 3);
   for (let i = 0; i < particlesCount * 3; i++) {
-    posArray[i] = (Math.random() - 0.5) * 5; // Tighter spread inside room
+    posArray[i] = (Math.random() - 0.5) * 5;
   }
   particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
   const particlesMaterial = new THREE.PointsMaterial({ size: 0.02, color: 0x00ffcc });
@@ -96,7 +97,7 @@ try {
     skillMeshes.push(sphere);
   });
 
-  // Camera position (start far for fly-through)
+  // Camera position
   camera.position.set(0, 0, 10);
   camera.lookAt(0, 0, 0);
 
@@ -227,7 +228,7 @@ try {
     });
   }
 
-  // Cinematic transitions
+  // Cinematic transitions with camera fly-ins
   window.startJourney = function () {
     currentSection = 'about';
     document.getElementById('ui-overlay').style.opacity = 0;
@@ -237,15 +238,24 @@ try {
       walls.forEach(wall => wall.visible = true);
       particles.visible = true;
       skillMeshes.forEach(mesh => mesh.visible = true);
+      // Camera fly-in animation
       gsap.to(camera.position, {
         z: 3,
         duration: 2,
         ease: 'power3.in',
-        onUpdate: () => camera.lookAt(0, 0, 0),
-        onComplete: () => {
-          updateUI([{ title: 'About Me', content: '<p>Certified Penetration Tester with expertise in network security, ethical hacking, and full-stack development.<br>M.Sc. Physics, The New College, Chennai (2023).</p><button onclick="goToSkills()">View Skills</button>' }]);
-          setTimeout(setupScrollTriggers, 100); // Delay to ensure DOM readiness
-        }
+        onUpdate: () => camera.lookAt(0, 0, 0)
+      }).then(() => {
+        gsap.to(camera.position, {
+          x: 0,
+          y: 0,
+          z: 2,
+          duration: 1.5,
+          ease: 'power2.out',
+          onComplete: () => {
+            updateUI([{ title: 'About Me', content: '<p>Certified Penetration Tester with expertise in network security, ethical hacking, and full-stack development.<br>M.Sc. Physics, The New College, Chennai (2023).</p><button onclick="goToSkills()">View Skills</button>' }]);
+            setTimeout(setupScrollTriggers, 100);
+          }
+        });
       });
     });
   };
