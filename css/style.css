@@ -138,6 +138,26 @@ body {
   border: 1px solid #00ffcc;
   box-sizing: border-box;
 }
+#enter-button {
+  padding: 15px 30px;
+  font-size: 1.8em;
+  font-weight: bold;
+  background: rgba(0, 0, 0, 0.5);
+  border: 3px solid #00ffcc;
+  color: #00ffcc;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: transform 0.3s, background 0.3s, color 0.3s;
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+#enter-button:hover {
+  transform: translateX(-50%) scale(1.2);
+  background: #00ffcc;
+  color: #000;
+}
 @media (max-width: 768px) {
   .ui-overlay h1 {
     font-size: 2em;
@@ -158,5 +178,10 @@ body {
   .terminal {
     width: 90%;
     padding: 15px;
+  }
+  #enter-button {
+    font-size: 1.5em;
+    padding: 12px 24px;
+    top: 75%;
   }
 }
