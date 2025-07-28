@@ -9,108 +9,22 @@
   <link rel="icon" href="/favicon.ico" type="image/x-icon"> <!-- Optional favicon -->
 </head>
 <body>
-  <div id="landing-effect" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100;">
-    <!-- Unicorn Studio effect -->
-    <div data-us-project="DZC1eJBOt9S7XzxZKogB" style="width: 100%; height: 100%;"></div>
-    <!-- Text and button overlay -->
-    <div id="overlay-content" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 101; pointer-events: none;">
-      <canvas id="text-overlay" style="position: relative; pointer-events: none;"></canvas>
-      <button id="enter-button" style="pointer-events: auto;">Enter My World</button>
-    </div>
-    <script type="text/javascript">
-      // Load Unicorn Studio library
-      !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
-
-      // Dynamic text overlay with outline
-      const canvas = document.getElementById('text-overlay');
-      const ctx = canvas.getContext('2d');
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        drawText();
-      }
-      window.addEventListener('resize', resizeCanvas);
-      resizeCanvas();
-
-      function drawText() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = 'bold 2em Orbitron';
-        ctx.textAlign = 'center';
-        // Outline
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#00ffcc'; // Neon outline
-        ctx.strokeText('P. Salmanul Faris', canvas.width / 2, canvas.height / 2 - 40);
-        ctx.strokeText('Cybersecurity | Developer | Physicist', canvas.width / 2, canvas.height / 2 + 20);
-        // Fill
-        ctx.fillStyle = '#ffffff'; // White fill
-        ctx.fillText('P. Salmanul Faris', canvas.width / 2, canvas.height / 2 - 40);
-        ctx.fillText('Cybersecurity | Developer | Physicist', canvas.width / 2, canvas.height / 2 + 20);
-        requestAnimationFrame(drawText);
-      }
-      drawText();
-
-      // Animated button
-      const button = document.getElementById('enter-button');
-      button.style.opacity = '0';
-      button.style.transition = 'opacity 1s, transform 0.3s';
-      setTimeout(() => {
-        button.style.opacity = '1';
-      }, 500);
-      button.addEventListener('mouseover', () => {
-        button.style.transform = 'scale(1.1)';
-      });
-      button.addEventListener('mouseout', () => {
-        button.style.transform = 'scale(1)';
-      });
-      button.addEventListener('click', () => {
-        document.getElementById('landing-effect').style.opacity = '0';
-        setTimeout(() => {
-          document.getElementById('landing-effect').style.display = 'none';
-          if (window.startJourney) window.startJourney(); // Ensure function exists
-          else console.error('startJourney not defined');
-        }, 500);
-      });
-
-      // Remove Unicorn Studio branding with MutationObserver
-      function hideBranding() {
-        const observer = new MutationObserver((mutations) => {
-          const branding = document.querySelector('[data-us-branding]') || document.querySelector('.us-branding');
-          if (branding) {
-            branding.style.display = 'none';
-            observer.disconnect(); // Stop observing once hidden
-          }
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-        // Initial check
-        const initialBranding = document.querySelector('[data-us-branding]') || document.querySelector('.us-branding');
-        if (initialBranding) initialBranding.style.display = 'none';
-      }
-      hideBranding();
-
-      window.startJourney = () => {
-        document.getElementById('landing-effect').style.opacity = '0';
-        setTimeout(() => {
-          document.getElementById('landing-effect').style.display = 'none';
-          if (window.startJourneyOriginal) window.startJourneyOriginal();
-        }, 500);
-      };
-      window.startJourneyOriginal = window.startJourney || function() {};
-    </script>
-  </div>
-  <div id="background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none;"></div>
+  <div id="background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000;"></div>
   <div id="loading-screen" style="display: none;">
     <div class="terminal">
       <div class="terminal-header">> Cyber Matrix Initializing...</div>
       <div id="terminal-messages"></div>
     </div>
   </div>
-  <div id="webgl" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;"></div>
-  <div class="ui-overlay" id="ui-overlay" style="display: none;">
-    <!-- Button removed, handled by effect -->
+  <div id="webgl" style="display: none;"></div>
+  <div class="ui-overlay" id="ui-overlay">
+    <h1>P. Salmanul Faris</h1>
+    <p>Cybersecurity Professional | Full-Stack Developer | Physicist</p>
+    <button onclick="startJourney()">Enter My World</button>
   </div>
   <div id="card-container"></div>
   <script>
-    // Fallback
+    // Fallback to confirm JS is running
     window.startJourney = window.startJourney || function() {
       alert('JavaScript is running, but main.js may not be loaded. Check browser console (F12) for errors.');
     };
