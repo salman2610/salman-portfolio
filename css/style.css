@@ -124,16 +124,16 @@ body {
 }
 .room {
   position: absolute;
-  width: 10;
-  height: 10;
-  background: rgba(0, 0, 0, 0.7);
+  width: 10px;
+  height: 10px;
+  background: transparent;
   border: 1px solid #00ffcc;
   visibility: hidden;
 }
 .three-room {
   position: absolute;
-  width: 10;
-  height: 10;
+  width: 10px;
+  height: 10px;
   background: rgba(0, 255, 204, 0.1);
   border: 1px solid #00ffcc;
   box-sizing: border-box;
@@ -142,12 +142,12 @@ body {
   padding: 15px 30px;
   font-size: 1.8em;
   font-weight: bold;
-  background: linear-gradient(45deg, #00ffcc, #ff00ff, #00ffff); /* Neon gradient */
+  background: linear-gradient(45deg, #00ffcc, #ff00ff, #00ffff);
   border: 3px solid #00ffcc;
   color: #000;
   cursor: pointer;
   border-radius: 10px;
-  box-shadow: 0 0 10px #00ffcc, 0 0 20px #ff00ff, 0 0 30px #00ffff; /* Glow effect */
+  box-shadow: 0 0 10px #00ffcc, 0 0 20px #ff00ff, 0 0 30px #00ffff;
   transition: transform 0.3s, box-shadow 0.3s;
   position: absolute;
   top: 70%;
@@ -156,32 +156,14 @@ body {
 }
 #enter-button:hover {
   transform: translateX(-50%) scale(1.2);
-  box-shadow: 0 0 15px #00ffcc, 0 0 25px #ff00ff, 0 0 40px #00ffff; /* Enhanced glow */
+  box-shadow: 0 0 15px #00ffcc, 0 0 25px #ff00ff, 0 0 40px #00ffff;
 }
 @media (max-width: 768px) {
-  .ui-overlay h1 {
-    font-size: 2em;
-  }
-  .ui-overlay h2 {
-    font-size: 1.5em;
-  }
-  .ui-overlay p {
-    font-size: 1em;
-  }
-  .ui-overlay button {
-    font-size: 1em;
-    padding: 8px 16px;
-  }
-  .card {
-    width: 250px;
-  }
-  .terminal {
-    width: 90%;
-    padding: 15px;
-  }
-  #enter-button {
-    font-size: 1.5em;
-    padding: 12px 24px;
-    top: 75%;
-  }
+  .ui-overlay h1 { font-size: 2em; }
+  .ui-overlay h2 { font-size: 1.5em; }
+  .ui-overlay p { font-size: 1em; }
+  .ui-overlay button { font-size: 1em; padding: 8px 16px; }
+  .card { width: 250px; }
+  .terminal { width: 90%; padding: 15px; }
+  #enter-button { font-size: 1.5em; padding: 12px 24px; top: 75%; }
 }
