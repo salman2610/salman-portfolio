@@ -6,116 +6,30 @@
   <title>P. Salmanul Faris - Portfolio</title>
   <link rel="stylesheet" href="/salman-portfolio/css/style.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=VT323&display=swap" rel="stylesheet">
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon"> <!-- Optional favicon -->
 </head>
 <body>
-  <div id="landing-effect" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 100;">
-    <div data-us-project="DZC1eJBOt9S7XzxZKogB" style="width: 100%; height: 100%;"></div>
-    <div id="overlay-content" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 101; pointer-events: none;">
-      <canvas id="text-overlay" style="position: relative; pointer-events: none;"></canvas>
-      <button id="enter-button" style="pointer-events: auto;">Enter My World</button>
-    </div>
-    <script type="text/javascript">
-      !function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();
-
-      const canvas = document.getElementById('text-overlay');
-      const ctx = canvas.getContext('2d');
-      function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        drawText();
-      }
-      window.addEventListener('resize', resizeCanvas);
-      resizeCanvas();
-
-      function drawText() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.font = 'bold 2em Orbitron';
-        ctx.textAlign = 'center';
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = '#00ffcc';
-        ctx.strokeText('P. Salmanul Faris', canvas.width / 2, canvas.height / 2 - 40);
-        ctx.strokeText('Cybersecurity | Developer | Physicist', canvas.width / 2, canvas.height / 2 + 20);
-        ctx.fillStyle = '#ffffff';
-        ctx.fillText('P. Salmanul Faris', canvas.width / 2, canvas.height / 2 - 40);
-        ctx.fillText('Cybersecurity | Developer | Physicist', canvas.width / 2, canvas.height / 2 + 20);
-        requestAnimationFrame(drawText);
-      }
-      drawText();
-
-      const button = document.getElementById('enter-button');
-      button.style.opacity = '0';
-      button.style.transition = 'opacity 1s, transform 0.3s';
-      setTimeout(() => {
-        button.style.opacity = '1';
-      }, 500);
-      button.addEventListener('mouseover', () => {
-        button.style.transform = 'scale(1.1)';
-      });
-      button.addEventListener('mouseout', () => {
-        button.style.transform = 'scale(1)';
-      });
-      button.addEventListener('click', () => {
-        console.log('Button clicked, calling startJourney');
-        if (window.startJourney) {
-          document.getElementById('landing-effect').style.opacity = '0';
-          setTimeout(() => {
-            document.getElementById('landing-effect').style.display = 'none';
-            window.startJourney();
-          }, 500);
-        } else {
-          console.error('startJourney is not defined. Check main.js loading.');
-          alert('Error: 3D environment failed to load. Check console (F12) for details.');
-        }
-      });
-
-      function hideBranding() {
-        const observer = new MutationObserver((mutations) => {
-          const branding = document.querySelector('[data-us-branding]') || document.querySelector('.us-branding');
-          if (branding) {
-            branding.style.display = 'none';
-            observer.disconnect();
-          }
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-        const initialBranding = document.querySelector('[data-us-branding]') || document.querySelector('.us-branding');
-        if (initialBranding) initialBranding.style.display = 'none';
-      }
-      hideBranding();
-
-      window.startJourney = () => {
-        document.getElementById('landing-effect').style.opacity = '0';
-        setTimeout(() => {
-          document.getElementById('landing-effect').style.display = 'none';
-          if (window.startJourneyOriginal) window.startJourneyOriginal();
-        }, 500);
-      };
-      window.startJourneyOriginal = window.startJourney || function() {};
-    </script>
-  </div>
-  <div id="background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: none;"></div>
+  <div id="background" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000;"></div>
   <div id="loading-screen" style="display: none;">
     <div class="terminal">
       <div class="terminal-header">> Cyber Matrix Initializing...</div>
       <div id="terminal-messages"></div>
     </div>
   </div>
-  <div id="webgl" style="display: block; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200;"></div>
-  <div class="ui-overlay" id="ui-overlay" style="display: none;"></div>
+  <div id="webgl" style="display: none;"></div>
+  <div class="ui-overlay" id="ui-overlay">
+    <h1>P. Salmanul Faris</h1>
+    <p>Cybersecurity Professional | Full-Stack Developer | Physicist</p>
+    <button onclick="startJourney()">Enter My World</button>
+  </div>
   <div id="card-container"></div>
   <script>
     window.startJourney = window.startJourney || function() {
-      alert('JavaScript is running, but main.js may not be loaded. Check console (F12) for errors.');
+      alert('JavaScript is running, but main.js may not be loaded. Check browser console (F12) for errors.');
     };
   </script>
-  <!-- Use ES module for GSAP -->
-  <script type="module">
-    import { gsap } from 'https://cdn.skypack.dev/gsap@3.12.5';
-    import { ScrollTrigger } from 'https://cdn.skypack.dev/gsap@3.12.5/ScrollTrigger';
-    gsap.registerPlugin(ScrollTrigger);
-    window.gsap = gsap; // Make gsap globally available
-    window.ScrollTrigger = ScrollTrigger;
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script type="module" src="/salman-portfolio/js/main.js"></script>
 </body>
 </html>
